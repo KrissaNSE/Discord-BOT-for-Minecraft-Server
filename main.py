@@ -11,16 +11,17 @@ DISCORD_TOKEN = os.environ['TOKEN']
 
 intents = discord.Intents.default()
 intents.members=True
+#Prefix
 bot = commands.Bot('ecn!', intents=intents)
 
-#status
+#Status
 @bot.event
 async def on_ready():
     print(f'{bot.user} har aktiverats & är aktiv i discord!')
 
     await bot.change_presence(activity=discord.Game(name="@ ECNNetwork.se"))
 
-#Välkommen
+#Meddelande när man kommer in
 @bot.event
 async def on_member_join(member):
     channel = bot.get_channel(851740517611732994)
@@ -31,14 +32,14 @@ async def on_member_join(member):
     role = discord.utils.get(member.guild.roles, name='Medlem')
     await member.add_roles(role)
 
-#HEJ
+#Svarar vid kommand
 @bot.command(
   help="Detta kommand säger hej till dig!"
 )
 async def hej(ctx):
 	await ctx.channel.send("hejsan")
 
-#PAJ
+#Svarar vid skrift
 @bot.event
 async def on_message(message):
   if message.content == "paj":
@@ -46,7 +47,7 @@ async def on_message(message):
 
   await bot.process_commands(message)
 
-#Vem är en tönt?
+#Svarar med namn + text
 @bot.command(
 	help="Vem är en tönt?",
 )
@@ -63,13 +64,15 @@ async def tönt(ctx, *args):
 async def flaska(ctx, amount: typing.Optional[int] = 99, *, liquid="öl"):
     await ctx.send('{} flaskor av {} finns kvar!'.format(amount, liquid))  
 
-#slå
+#Slå folk
 @bot.command()
 async def slå(ctx, members: commands.Greedy[discord.Member], *, reason='Fanns ingen :c'):
     slapped = ", ".join(x.name for x in members)
     await ctx.send('{} blev nyss slagen/slagna! Anledning: {}'.format(slapped, reason))
 
-#api test
+##API##
+
+#API #1 (Quotes)
 @bot.command()
 async def inspiration(ctx):
     quote = get_quote()
@@ -81,7 +84,7 @@ def get_quote():
   quote = json_data[0]['q'] + " -" + json_data[0]['a']
   return quote
 
-#api test 2
+#API #2 (Online spelare)
 @bot.command()
 async def spelare(ctx):
     status = get_status()
@@ -93,7 +96,7 @@ def get_status():
   status = json_data["players"] + " " + "spelare är för tillfället inne på `ECNNetwork.se`"
   return status
 
-#api test 3
+#API #3 (Antalet röster)
 @bot.command()
 async def röster(ctx):
     votes = get_votes()
@@ -108,7 +111,7 @@ def get_votes():
   votes = json_data["votes"] + " " + "spelare har röstat på servern!"
   return votes
 
-#api test 4
+#API #4 (Hämtar banner)
 @bot.command()
 async def banner(ctx):
   banner = get_banner()
@@ -120,18 +123,17 @@ def get_banner():
   banner = json_data["banner_url"]
   return banner
 
-#förslag
+##Slut av API##
+
+#Förslag
 @bot.command(
-  help="Om du har ett förslag du vill lägga fram, kan du använda dig av detta kommand! SKriv ecn!förslag <förslag>"
+  help="För att skriva ett förslag skriver du: ecn!förslag <förslag>"
 )
 async def förslag(ctx, *, message): 
     await ctx.message.delete()
     msg = await ctx.send(message)
     await msg.add_reaction('👍')
     await msg.add_reaction('👎')
-
-#Egen hjälp meny:
-#https://www.youtube.com/watch?v=ivXw9VO89jw&t=174s&ab_channel=CodeWithSwastik
 
 bot.run(os.environ['TOKEN'])
 
