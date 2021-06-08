@@ -21,13 +21,15 @@ async def on_ready():
     await bot.change_presence(activity=discord.Game(name="@ ECNNetwork.se"))
 
 #Välkommen
-#https://stackoverflow.com/questions/63321098/is-it-possible-to-get-channel-id-by-name-in-discord-py
 @bot.event
 async def on_member_join(member):
     channel = bot.get_channel(851740517611732994)
     embed=discord.Embed(title=f"**Välkommen {member.name}!** 🥳", description=f"Vad roligt att se dig inne här! Hoppas du trivs!")
     embed.set_thumbnail(url=member.avatar_url) 
     await channel.send(embed=embed)
+#Auto Roll
+    role = discord.utils.get(member.guild.roles, name='Medlem')
+    await member.add_roles(role)
 
 #HEJ
 @bot.command(
